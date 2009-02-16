@@ -301,6 +301,7 @@ int
 zclient_start (struct zclient *zclient)
 {
   int i;
+  afi_t afi;
 
   if (zclient_debug)
     zlog_debug ("zclient_start is called");
@@ -439,6 +440,7 @@ zapi_ipv4_route (u_char cmd, struct zclient *zclient, struct prefix_ipv4 *p,
   stream_putc (s, api->type);
   stream_putc (s, api->flags);
   stream_putc (s, api->message);
+  stream_putw (s, api->safi); /* Put SAFI value as part of the message */
 
   /* Put prefix information. */
   psize = PSIZE (p->prefixlen);

@@ -25,7 +25,7 @@ extern void bgp_zebra_init (void);
 extern int bgp_if_update_all (void);
 extern int bgp_config_write_redistribute (struct vty *, struct bgp *, afi_t, safi_t,
 				   int *);
-extern void bgp_zebra_announce (struct prefix *, struct bgp_info *, struct bgp *);
+extern void bgp_zebra_announce (struct prefix *, struct bgp_info *, struct bgp *, safi_t safi); /* GB */
 extern void bgp_zebra_withdraw (struct prefix *, struct bgp_info *);
 
 extern int bgp_redistribute_set (struct bgp *, afi_t, int);

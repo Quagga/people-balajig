@@ -673,7 +673,7 @@ bgp_ifindex_by_nexthop (struct in6_addr *addr)
 #endif /* HAVE_IPV6 */
 
 void
-bgp_zebra_announce (struct prefix *p, struct bgp_info *info, struct bgp *bgp)
+bgp_zebra_announce (struct prefix *p, struct bgp_info *info, struct bgp *bgp, safi_t safi)
 {
   int flags;
   u_char distance;
@@ -708,6 +708,7 @@ bgp_zebra_announce (struct prefix *p, struct bgp_info *info, struct bgp *bgp)
 
       api.type = ZEBRA_ROUTE_BGP;
       api.message = 0;
+      api.safi = safi; /* GB */
       SET_FLAG (api.message, ZAPI_MESSAGE_NEXTHOP);
       api.nexthop_num = 1;
       api.nexthop = &nexthop;

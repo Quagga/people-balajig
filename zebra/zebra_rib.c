@@ -90,6 +90,13 @@ vrf_alloc (const char *name)
   vrf->stable[AFI_IP][SAFI_UNICAST] = route_table_init ();
   vrf->stable[AFI_IP6][SAFI_UNICAST] = route_table_init ();
 
+  /*
+   * Initialize the Multicast routing table
+   */
+  vrf->table[AFI_IP][SAFI_MULTICAST] = route_table_init ();
+  vrf->table[AFI_IP6][SAFI_MULTICAST] = route_table_init ();
+  vrf->stable[AFI_IP][SAFI_MULTICAST] = route_table_init ();
+  vrf->stable[AFI_IP6][SAFI_MULTICAST] = route_table_init ();
   return vrf;
 }
 
@@ -1797,15 +1804,16 @@ void rib_lookup_and_pushup (struct prefix_ipv4 * p)
 }
 
 int
-rib_add_ipv4_multipath (struct prefix_ipv4 *p, struct rib *rib)
+rib_add_ipv4_multipath (struct prefix_ipv4 *p, struct rib *rib, safi_t safi) 
 {
   struct route_table *table;
   struct route_node *rn;
   struct rib *same;
   struct nexthop *nexthop;
   
-  /* Lookup table.  */
-  table = vrf_table (AFI_IP, SAFI_UNICAST, 0);
+  /* Lookup table based on the SAFI .  */
+  table = vrf_table (AFI_IP, safi, 0); 
+
   if (! table)
     return 0;
   /* Make it sure prefixlen is applied to the prefix. */

@@ -837,6 +837,41 @@ DEFUN (show_ip_route,
   return CMD_SUCCESS;
 }
 
+
+/*
+ * Used for Debugging purposes
+ */
+DEFUN (show_ip_mroute,
+       show_ip_mroute_cmd,
+       "show ip mroute",
+       SHOW_STR
+       IP_STR
+       "IP Multicast routing table\n")
+{
+  struct route_table *table;
+  struct route_node *rn;
+  struct rib *rib;
+  int first = 1;
+
+  table = vrf_table (AFI_IP, SAFI_MULTICAST, 0);
+  if (! table)
+    return CMD_SUCCESS;
+
+  /* Show all IPv4 routes. */
+  for (rn = route_top (table); rn; rn = route_next (rn))
+    for (rib = rn->info; rib; rib = rib->next)
+      {
+	if (first)
+	  {
+	    vty_out (vty, SHOW_ROUTE_V4_HEADER, VTY_NEWLINE, VTY_NEWLINE,
+		     VTY_NEWLINE);
+	    first = 0;
+	  }
+	vty_show_ip_route (vty, rn, rib);
+      }
+  return CMD_SUCCESS;
+}
+
 DEFUN (show_ip_route_prefix_longer,
        show_ip_route_prefix_longer_cmd,
        "show ip route A.B.C.D/M longer-prefixes",
@@ -2083,6 +2118,8 @@ zebra_vty_init (void)
   install_element (ENABLE_NODE, &show_ip_route_protocol_cmd);
   install_element (ENABLE_NODE, &show_ip_route_supernets_cmd);
 
+  install_element (VIEW_NODE, &show_ip_mroute_cmd);
+  install_element (ENABLE_NODE, &show_ip_mroute_cmd);
 #if 0
   install_element (VIEW_NODE, &show_ip_route_summary_cmd);
   install_element (ENABLE_NODE, &show_ip_route_summary_cmd);

@@ -42,7 +42,7 @@
 #include "zebra/redistribute.h"
 #include "zebra/debug.h"
 #include "zebra/ipforward.h"
-
+
 /* Event list of zebra. */
 enum event { ZEBRA_SERV, ZEBRA_READ, ZEBRA_WRITE };
 
@@ -741,6 +741,7 @@ zread_ipv4_add (struct zserv *client, u_short length)
   struct stream *s;
   unsigned int ifindex;
   u_char ifname_len;
+  safi_t safi; 
 
   /* Get input stream.  */
   s = client->ibuf;
@@ -748,10 +749,11 @@ zread_ipv4_add (struct zserv *client, u_short length)
   /* Allocate new rib. */
   rib = XCALLOC (MTYPE_RIB, sizeof (struct rib));
   
-  /* Type, flags, message. */
+  /* Type, flags, message, safi. */
   rib->type = stream_getc (s);
   rib->flags = stream_getc (s);
   message = stream_getc (s); 
+  safi = stream_getw (s); 
   rib->uptime = time (NULL);
 
   /* IPv4 prefix. */
@@ -803,7 +805,7 @@ zread_ipv4_add (struct zserv *client, u_short length)
     
   /* Table */
   rib->table=zebrad.rtm_table_default;
-  rib_add_ipv4_multipath (&p, rib);
+  rib_add_ipv4_multipath (&p, rib, safi); 
   return 0;
 }
 

@@ -251,7 +251,7 @@ extern int rib_add_ipv4 (int type, int flags, struct prefix_ipv4 *p,
 			 unsigned int ifindex, u_int32_t vrf_id,
 			 u_int32_t, u_char);
 
-extern int rib_add_ipv4_multipath (struct prefix_ipv4 *, struct rib *);
+extern int rib_add_ipv4_multipath (struct prefix_ipv4 *, struct rib *, safi_t safi);
 
 extern int rib_delete_ipv4 (int type, int flags, struct prefix_ipv4 *p,
 		            struct in_addr *gate, unsigned int ifindex, 
