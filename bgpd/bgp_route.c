@@ -1502,6 +1502,7 @@ bgp_process_main (struct work_queue *wq, void *data)
   struct bgp_info_pair old_and_new;
   struct listnode *node, *nnode;
   struct peer *peer;
+
   
   /* Best path selection. */
   bgp_best_selection (bgp, rn, &old_and_new);
@@ -1514,7 +1515,7 @@ bgp_process_main (struct work_queue *wq, void *data)
       if (! CHECK_FLAG (old_select->flags, BGP_INFO_ATTR_CHANGED))
         {
           if (CHECK_FLAG (old_select->flags, BGP_INFO_IGP_CHANGED))
-            bgp_zebra_announce (p, old_select, bgp);
+            bgp_zebra_announce (p, old_select, bgp, safi); 
           
           UNSET_FLAG (rn->flags, BGP_NODE_PROCESS_SCHEDULED);
           return WQ_SUCCESS;
@@ -1537,13 +1538,13 @@ bgp_process_main (struct work_queue *wq, void *data)
     }
 
   /* FIB update. */
-  if (safi == SAFI_UNICAST && ! bgp->name &&
+  if ((safi == SAFI_UNICAST || safi == SAFI_MULTICAST )&& ! bgp->name &&
       ! bgp_option_check (BGP_OPT_NO_FIB))
     {
       if (new_select 
 	  && new_select->type == ZEBRA_ROUTE_BGP 
 	  && new_select->sub_type == BGP_ROUTE_NORMAL)
-	bgp_zebra_announce (p, new_select, bgp);
+	bgp_zebra_announce (p, new_select, bgp, safi);
       else
 	{
 	  /* Withdraw the route from the kernel. */
@@ -2076,7 +2077,7 @@ bgp_update_main (struct peer *peer, struct prefix *p, struct attr *attr,
     }
 
   /* IPv4 unicast next hop check.  */
-  if (afi == AFI_IP && safi == SAFI_UNICAST)
+  if ((afi == AFI_IP && safi == SAFI_UNICAST) || (afi == AFI_IP && safi == SAFI_MULTICAST))
     {
       /* If the peer is EBGP and nexthop is not on connected route,
 	 discard it.  */
@@ -2325,6 +2326,7 @@ bgp_update (struct peer *peer, struct prefix *p, struct attr *attr,
   struct listnode *node, *nnode;
   struct bgp *bgp;
   int ret;
+
 
   ret = bgp_update_main (peer, p, attr, afi, safi, type, sub_type, prd, tag,
           soft_reconfig);
