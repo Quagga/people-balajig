@@ -822,6 +822,7 @@ zread_ipv4_delete (struct zserv *client, u_short length)
   u_char nexthop_num;
   u_char nexthop_type;
   u_char ifname_len;
+  safi_t safi; 
   
   s = client->ibuf;
   ifindex = 0;
@@ -831,6 +832,7 @@ zread_ipv4_delete (struct zserv *client, u_short length)
   api.type = stream_getc (s);
   api.flags = stream_getc (s);
   api.message = stream_getc (s);
+  api.safi = stream_getw (s); 
 
   /* IPv4 prefix. */
   memset (&p, 0, sizeof (struct prefix_ipv4));
@@ -879,7 +881,7 @@ zread_ipv4_delete (struct zserv *client, u_short length)
     api.metric = 0;
     
   rib_delete_ipv4 (api.type, api.flags, &p, &nexthop, ifindex,
-		   client->rtm_table);
+		   client->rtm_table, api.safi);
   return 0;
 }
 

@@ -809,7 +809,7 @@ bgp_zebra_announce (struct prefix *p, struct bgp_info *info, struct bgp *bgp, sa
 }
 
 void
-bgp_zebra_withdraw (struct prefix *p, struct bgp_info *info)
+bgp_zebra_withdraw (struct prefix *p, struct bgp_info *info, safi_t safi)
 {
   int flags;
   struct peer *peer;
@@ -843,6 +843,7 @@ bgp_zebra_withdraw (struct prefix *p, struct bgp_info *info)
 
       api.type = ZEBRA_ROUTE_BGP;
       api.message = 0;
+      api.safi = safi;
       SET_FLAG (api.message, ZAPI_MESSAGE_NEXTHOP);
       api.nexthop_num = 1;
       api.nexthop = &nexthop;
