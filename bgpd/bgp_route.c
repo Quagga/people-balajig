@@ -4410,7 +4410,7 @@ DEFUN (ipv6_bgp_network,
   if (argc == 2)
     VTY_GET_INTEGER_RANGE ("Pathlimit TTL", ttl, argv[1], 1, 255);
 
-  return bgp_static_set (vty, vty->index, argv[0], AFI_IP6, SAFI_UNICAST,
+  return bgp_static_set (vty, vty->index, argv[0], AFI_IP6, bgp_node_safi(vty),
                          NULL, 0, ttl);
 }
 
@@ -4441,7 +4441,7 @@ DEFUN (no_ipv6_bgp_network,
        "Specify a network to announce via BGP\n"
        "IPv6 prefix <network>/<length>\n")
 {
-  return bgp_static_unset (vty, vty->index, argv[0], AFI_IP6, SAFI_UNICAST);
+  return bgp_static_unset (vty, vty->index, argv[0], AFI_IP6, bgp_node_safi (vty));
 }
 
 ALIAS (no_ipv6_bgp_network,
@@ -11921,8 +11921,9 @@ bgp_route_init ()
   install_element (BGP_IPV6_NODE, &no_ipv6_aggregate_address_cmd);
   install_element (BGP_IPV6_NODE, &no_ipv6_aggregate_address_summary_only_cmd);
 
-
+  /* Multicast Address Family Mode configuration */
   install_element (BGP_IPV6M_NODE, &ipv6_bgp_network_cmd);
+  install_element (BGP_IPV6M_NODE, &no_ipv6_bgp_network_cmd);
 
   /* Old config IPv6 BGP commands.  */
   install_element (BGP_NODE, &old_ipv6_bgp_network_cmd);
