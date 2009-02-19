@@ -11921,6 +11921,9 @@ bgp_route_init ()
   install_element (BGP_IPV6_NODE, &no_ipv6_aggregate_address_cmd);
   install_element (BGP_IPV6_NODE, &no_ipv6_aggregate_address_summary_only_cmd);
 
+
+  install_element (BGP_IPV6M_NODE, &ipv6_bgp_network_cmd);
+
   /* Old config IPv6 BGP commands.  */
   install_element (BGP_NODE, &old_ipv6_bgp_network_cmd);
   install_element (BGP_NODE, &old_no_ipv6_bgp_network_cmd);

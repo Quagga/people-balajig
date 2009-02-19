@@ -1801,6 +1801,36 @@ DEFUN (show_ipv6_route,
   return CMD_SUCCESS;
 }
 
+DEFUN (show_ipv6_mroute,
+       show_ipv6_mroute_cmd,
+       "show ipv6 mroute",
+       SHOW_STR
+       IP_STR
+       "IPv6 Multicast routing table\n")
+{
+  struct route_table *table;
+  struct route_node *rn;
+  struct rib *rib;
+  int first = 1;
+
+  table = vrf_table (AFI_IP6, SAFI_MULTICAST, 0);
+  if (! table)
+    return CMD_SUCCESS;
+
+  /* Show all IPv6 route. */
+  for (rn = route_top (table); rn; rn = route_next (rn))
+    for (rib = rn->info; rib; rib = rib->next)
+      {
+	if (first)
+	  {
+	    vty_out (vty, SHOW_ROUTE_V6_HEADER, VTY_NEWLINE, VTY_NEWLINE, VTY_NEWLINE);
+	    first = 0;
+	  }
+	vty_show_ipv6_route (vty, rn, rib);
+      }
+  return CMD_SUCCESS;
+}
+
 DEFUN (show_ipv6_route_prefix_longer,
        show_ipv6_route_prefix_longer_cmd,
        "show ipv6 route X:X::X:X/M longer-prefixes",
@@ -2152,5 +2182,9 @@ zebra_vty_init (void)
   install_element (ENABLE_NODE, &show_ipv6_route_addr_cmd);
   install_element (ENABLE_NODE, &show_ipv6_route_prefix_cmd);
   install_element (ENABLE_NODE, &show_ipv6_route_prefix_longer_cmd);
+
+
+  install_element (VIEW_NODE, &show_ipv6_mroute_cmd);
+  install_element (ENABLE_NODE, &show_ipv6_mroute_cmd);
 #endif /* HAVE_IPV6 */
 }
