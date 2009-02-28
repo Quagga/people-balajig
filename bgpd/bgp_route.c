@@ -5377,7 +5377,7 @@ ALIAS (no_ipv6_aggregate_address_summary_only,
 /* Redistribute route treatment. */
 void
 bgp_redistribute_add (struct prefix *p, struct in_addr *nexthop,
-		      u_int32_t metric, u_char type)
+		      u_int32_t metric, u_char type, safi_t safi)
 {
   struct bgp *bgp;
   struct listnode *node, *nnode;
@@ -5433,13 +5433,13 @@ bgp_redistribute_add (struct prefix *p, struct in_addr *nexthop,
 		  /* Unintern original. */
 		  aspath_unintern (attr.aspath);
 		  bgp_attr_extra_free (&attr);
-		  bgp_redistribute_delete (p, type);
+		  bgp_redistribute_delete (p, type, safi);
 		  return;
 		}
 	    }
 
-          bn = bgp_afi_node_get (bgp->rib[afi][SAFI_UNICAST], 
-                                 afi, SAFI_UNICAST, p, NULL);
+          bn = bgp_afi_node_get (bgp->rib[afi][safi], 
+                                 afi, safi, p, NULL);
           
 	  new_attr = bgp_attr_intern (&attr_new);
 	  bgp_attr_extra_free (&attr_new);
@@ -5476,7 +5476,7 @@ bgp_redistribute_add (struct prefix *p, struct in_addr *nexthop,
  
  		  /* Process change. */
  		  bgp_aggregate_increment (bgp, p, bi, afi, SAFI_UNICAST);
- 		  bgp_process (bgp, bn, afi, SAFI_UNICAST);
+ 		  bgp_process (bgp, bn, afi, safi);
  		  bgp_unlock_node (bn);
  		  aspath_unintern (attr.aspath);
  		  bgp_attr_extra_free (&attr);
@@ -5505,7 +5505,7 @@ bgp_redistribute_add (struct prefix *p, struct in_addr *nexthop,
 }
 
 void
-bgp_redistribute_delete (struct prefix *p, u_char type)
+bgp_redistribute_delete (struct prefix *p, u_char type, safi_t safi)
 {
   struct bgp *bgp;
   struct listnode *node, *nnode;
@@ -5519,7 +5519,7 @@ bgp_redistribute_delete (struct prefix *p, u_char type)
 
       if (bgp->redist[afi][type])
 	{
-         rn = bgp_afi_node_get (bgp->rib[afi][SAFI_UNICAST], afi, SAFI_UNICAST, p, NULL);
+         rn = bgp_afi_node_get (bgp->rib[afi][safi], afi, safi, p, NULL);
 
 	  for (ri = rn->info; ri; ri = ri->next)
 	    if (ri->peer == bgp->peer_self
@@ -5530,7 +5530,7 @@ bgp_redistribute_delete (struct prefix *p, u_char type)
 	    {
 	      bgp_aggregate_decrement (bgp, p, ri, afi, SAFI_UNICAST);
 	      bgp_info_delete (rn, ri);
-	      bgp_process (bgp, rn, afi, SAFI_UNICAST);
+	      bgp_process (bgp, rn, afi, safi);
 	    }
 	  bgp_unlock_node (rn);
 	}
@@ -5539,13 +5539,13 @@ bgp_redistribute_delete (struct prefix *p, u_char type)
 
 /* Withdraw specified route type's route. */
 void
-bgp_redistribute_withdraw (struct bgp *bgp, afi_t afi, int type)
+bgp_redistribute_withdraw (struct bgp *bgp, afi_t afi, int type, safi_t safi)
 {
   struct bgp_node *rn;
   struct bgp_info *ri;
   struct bgp_table *table;
 
-  table = bgp->rib[afi][SAFI_UNICAST];
+  table = bgp->rib[afi][safi];
 
   for (rn = bgp_table_top (table); rn; rn = bgp_route_next (rn))
     {
@@ -5558,7 +5558,7 @@ bgp_redistribute_withdraw (struct bgp *bgp, afi_t afi, int type)
 	{
 	  bgp_aggregate_decrement (bgp, &rn->p, ri, afi, SAFI_UNICAST);
 	  bgp_info_delete (rn, ri);
-	  bgp_process (bgp, rn, afi, SAFI_UNICAST);
+	  bgp_process (bgp, rn, afi, safi);
 	}
     }
 }

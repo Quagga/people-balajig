@@ -74,7 +74,7 @@ ospf6_zebra_redistribute (int type)
     return;
   zclient->redist[type] = 1;
   if (zclient->sock > 0)
-    zebra_redistribute_send (ZEBRA_REDISTRIBUTE_ADD, zclient, type);
+    zebra_redistribute_send (ZEBRA_REDISTRIBUTE_ADD, zclient, type, SAFI_UNICAST);
 }
 
 void
@@ -84,7 +84,7 @@ ospf6_zebra_no_redistribute (int type)
     return;
   zclient->redist[type] = 0;
   if (zclient->sock > 0)
-    zebra_redistribute_send (ZEBRA_REDISTRIBUTE_DELETE, zclient, type);
+    zebra_redistribute_send (ZEBRA_REDISTRIBUTE_DELETE, zclient, type, SAFI_UNICAST);
 }
 
 /* Inteface addition message from zebra. */

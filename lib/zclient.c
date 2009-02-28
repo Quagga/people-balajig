@@ -302,6 +302,7 @@ zclient_start (struct zclient *zclient)
 {
   int i;
   afi_t afi;
+  safi_t safi;
 
   if (zclient_debug)
     zlog_debug ("zclient_start is called");
@@ -352,8 +353,9 @@ zclient_start (struct zclient *zclient)
 
   /* Flush all redistribute request. */
   for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
-    if (i != zclient->redist_default && zclient->redist[i])
-      zebra_redistribute_send (ZEBRA_REDISTRIBUTE_ADD, zclient, i);
+      for (safi = SAFI_UNICAST; safi < SAFI_MAX; safi++);
+    if (i != zclient->redist_default && zclient->redist[i]) 
+      zebra_redistribute_send (ZEBRA_REDISTRIBUTE_ADD, zclient, i, safi);
 
   /* If default information is needed. */
   if (zclient->default_information)
@@ -545,7 +547,7 @@ zapi_ipv6_route (u_char cmd, struct zclient *zclient, struct prefix_ipv6 *p,
  * sending client
  */
 int
-zebra_redistribute_send (int command, struct zclient *zclient, int type)
+zebra_redistribute_send (int command, struct zclient *zclient, int type, safi_t safi)
 {
   struct stream *s;
 
@@ -554,6 +556,7 @@ zebra_redistribute_send (int command, struct zclient *zclient, int type)
   
   zclient_create_header (s, command);
   stream_putc (s, type);
+  stream_putw (s, safi);
   
   stream_putw_at (s, 0, stream_get_endp (s));
   
@@ -956,7 +959,7 @@ zclient_read (struct thread *thread)
 }
 
 void
-zclient_redistribute (int command, struct zclient *zclient, int type)
+zclient_redistribute (int command, struct zclient *zclient, int type, safi_t safi)
 {
 
   if (command == ZEBRA_REDISTRIBUTE_ADD) 
@@ -973,7 +976,7 @@ zclient_redistribute (int command, struct zclient *zclient, int type)
     }
 
   if (zclient->sock > 0)
-    zebra_redistribute_send (command, zclient, type);
+    zebra_redistribute_send (command, zclient, type, safi);
 }
 
 

@@ -2053,9 +2053,10 @@ bgp_delete (struct bgp *bgp)
 
   /* Unset redistribution. */
   for (afi = AFI_IP; afi < AFI_MAX; afi++)
-    for (i = 0; i < ZEBRA_ROUTE_MAX; i++) 
-      if (i != ZEBRA_ROUTE_BGP)
-	bgp_redistribute_unset (bgp, afi, i);
+    for (safi = SAFI_UNICAST; safi < SAFI_MAX; safi++)
+      for (i = 0; i < ZEBRA_ROUTE_MAX; i++) 
+	if (i != ZEBRA_ROUTE_BGP)
+	  bgp_redistribute_unset (bgp, afi, i, safi);
 
   for (ALL_LIST_ELEMENTS (bgp->group, node, next, group))
     peer_group_delete (group);

@@ -8245,14 +8245,16 @@ DEFUN (bgp_redistribute_ipv4,
        "Static routes\n")
 {
   int type;
+  int safi;
 
   type = bgp_str2route_type (AFI_IP, argv[0]);
+  safi = bgp_node_safi (vty);
   if (! type)
     {
       vty_out (vty, "%% Invalid route type%s", VTY_NEWLINE);
       return CMD_WARNING;
     }
-  return bgp_redistribute_set (vty->index, AFI_IP, type);
+  return bgp_redistribute_set (vty->index, AFI_IP, type, safi);
 }
 
 DEFUN (bgp_redistribute_ipv4_rmap,
@@ -8268,8 +8270,10 @@ DEFUN (bgp_redistribute_ipv4_rmap,
        "Pointer to route-map entries\n")
 {
   int type;
+  int safi;
 
   type = bgp_str2route_type (AFI_IP, argv[0]);
+  safi = bgp_node_safi (vty);
   if (! type)
     {
       vty_out (vty, "%% Invalid route type%s", VTY_NEWLINE);
@@ -8277,7 +8281,7 @@ DEFUN (bgp_redistribute_ipv4_rmap,
     }
 
   bgp_redistribute_rmap_set (vty->index, AFI_IP, type, argv[1]);
-  return bgp_redistribute_set (vty->index, AFI_IP, type);
+  return bgp_redistribute_set (vty->index, AFI_IP, type, safi);
 }
 
 DEFUN (bgp_redistribute_ipv4_metric,
@@ -8294,8 +8298,10 @@ DEFUN (bgp_redistribute_ipv4_metric,
 {
   int type;
   u_int32_t metric;
+  safi_t safi;
 
   type = bgp_str2route_type (AFI_IP, argv[0]);
+  safi = bgp_node_safi (vty);
   if (! type)
     {
       vty_out (vty, "%% Invalid route type%s", VTY_NEWLINE);
@@ -8304,7 +8310,7 @@ DEFUN (bgp_redistribute_ipv4_metric,
   VTY_GET_INTEGER ("metric", metric, argv[1]);
 
   bgp_redistribute_metric_set (vty->index, AFI_IP, type, metric);
-  return bgp_redistribute_set (vty->index, AFI_IP, type);
+  return bgp_redistribute_set (vty->index, AFI_IP, type, safi);
 }
 
 DEFUN (bgp_redistribute_ipv4_rmap_metric,
@@ -8323,8 +8329,10 @@ DEFUN (bgp_redistribute_ipv4_rmap_metric,
 {
   int type;
   u_int32_t metric;
+  safi_t safi;
 
   type = bgp_str2route_type (AFI_IP, argv[0]);
+  safi = bgp_node_safi (vty);
   if (! type)
     {
       vty_out (vty, "%% Invalid route type%s", VTY_NEWLINE);
@@ -8334,7 +8342,7 @@ DEFUN (bgp_redistribute_ipv4_rmap_metric,
 
   bgp_redistribute_rmap_set (vty->index, AFI_IP, type, argv[1]);
   bgp_redistribute_metric_set (vty->index, AFI_IP, type, metric);
-  return bgp_redistribute_set (vty->index, AFI_IP, type);
+  return bgp_redistribute_set (vty->index, AFI_IP, type, safi);
 }
 
 DEFUN (bgp_redistribute_ipv4_metric_rmap,
@@ -8353,8 +8361,10 @@ DEFUN (bgp_redistribute_ipv4_metric_rmap,
 {
   int type;
   u_int32_t metric;
+  safi_t safi;
 
   type = bgp_str2route_type (AFI_IP, argv[0]);
+  safi = bgp_node_safi (vty);
   if (! type)
     {
       vty_out (vty, "%% Invalid route type%s", VTY_NEWLINE);
@@ -8364,7 +8374,7 @@ DEFUN (bgp_redistribute_ipv4_metric_rmap,
 
   bgp_redistribute_metric_set (vty->index, AFI_IP, type, metric);
   bgp_redistribute_rmap_set (vty->index, AFI_IP, type, argv[2]);
-  return bgp_redistribute_set (vty->index, AFI_IP, type);
+  return bgp_redistribute_set (vty->index, AFI_IP, type, safi);
 }
 
 DEFUN (no_bgp_redistribute_ipv4,
@@ -8379,15 +8389,17 @@ DEFUN (no_bgp_redistribute_ipv4,
        "Static routes\n")
 {
   int type;
+  safi_t safi;
 
   type = bgp_str2route_type (AFI_IP, argv[0]);
+  safi = bgp_node_safi (vty);
   if (! type)
     {
       vty_out (vty, "%% Invalid route type%s", VTY_NEWLINE);
       return CMD_WARNING;
     }
 
-  return bgp_redistribute_unset (vty->index, AFI_IP, type);
+  return bgp_redistribute_unset (vty->index, AFI_IP, type, safi);
 }
 
 DEFUN (no_bgp_redistribute_ipv4_rmap,
@@ -8498,15 +8510,17 @@ DEFUN (bgp_redistribute_ipv6,
        "Static routes\n")
 {
   int type;
+  safi_t safi;
 
   type = bgp_str2route_type (AFI_IP6, argv[0]);
+  safi = bgp_node_safi (vty);
   if (! type)
     {
       vty_out (vty, "%% Invalid route type%s", VTY_NEWLINE);
       return CMD_WARNING;
     }
 
-  return bgp_redistribute_set (vty->index, AFI_IP6, type);
+  return bgp_redistribute_set (vty->index, AFI_IP6, type, safi);
 }
 
 DEFUN (bgp_redistribute_ipv6_rmap,
@@ -8522,8 +8536,10 @@ DEFUN (bgp_redistribute_ipv6_rmap,
        "Pointer to route-map entries\n")
 {
   int type;
+  safi_t safi;
 
   type = bgp_str2route_type (AFI_IP6, argv[0]);
+  safi = bgp_node_safi (vty);
   if (! type)
     {
       vty_out (vty, "%% Invalid route type%s", VTY_NEWLINE);
@@ -8531,7 +8547,7 @@ DEFUN (bgp_redistribute_ipv6_rmap,
     }
 
   bgp_redistribute_rmap_set (vty->index, AFI_IP6, type, argv[1]);
-  return bgp_redistribute_set (vty->index, AFI_IP6, type);
+  return bgp_redistribute_set (vty->index, AFI_IP6, type, safi);
 }
 
 DEFUN (bgp_redistribute_ipv6_metric,
@@ -8548,8 +8564,10 @@ DEFUN (bgp_redistribute_ipv6_metric,
 {
   int type;
   u_int32_t metric;
+  safi_t safi;
 
   type = bgp_str2route_type (AFI_IP6, argv[0]);
+  safi = bgp_node_safi (vty);
   if (! type)
     {
       vty_out (vty, "%% Invalid route type%s", VTY_NEWLINE);
@@ -8558,7 +8576,7 @@ DEFUN (bgp_redistribute_ipv6_metric,
   VTY_GET_INTEGER ("metric", metric, argv[1]);
 
   bgp_redistribute_metric_set (vty->index, AFI_IP6, type, metric);
-  return bgp_redistribute_set (vty->index, AFI_IP6, type);
+  return bgp_redistribute_set (vty->index, AFI_IP6, type, safi);
 }
 
 DEFUN (bgp_redistribute_ipv6_rmap_metric,
@@ -8577,8 +8595,10 @@ DEFUN (bgp_redistribute_ipv6_rmap_metric,
 {
   int type;
   u_int32_t metric;
+  safi_t safi;
 
   type = bgp_str2route_type (AFI_IP6, argv[0]);
+  safi = bgp_node_safi (vty);
   if (! type)
     {
       vty_out (vty, "%% Invalid route type%s", VTY_NEWLINE);
@@ -8588,7 +8608,7 @@ DEFUN (bgp_redistribute_ipv6_rmap_metric,
 
   bgp_redistribute_rmap_set (vty->index, AFI_IP6, type, argv[1]);
   bgp_redistribute_metric_set (vty->index, AFI_IP6, type, metric);
-  return bgp_redistribute_set (vty->index, AFI_IP6, type);
+  return bgp_redistribute_set (vty->index, AFI_IP6, type, safi);
 }
 
 DEFUN (bgp_redistribute_ipv6_metric_rmap,
@@ -8607,8 +8627,10 @@ DEFUN (bgp_redistribute_ipv6_metric_rmap,
 {
   int type;
   u_int32_t metric;
+  safi_t safi;
 
   type = bgp_str2route_type (AFI_IP6, argv[0]);
+  safi = bgp_node_safi (vty);
   if (! type)
     {
       vty_out (vty, "%% Invalid route type%s", VTY_NEWLINE);
@@ -8618,7 +8640,7 @@ DEFUN (bgp_redistribute_ipv6_metric_rmap,
 
   bgp_redistribute_metric_set (vty->index, AFI_IP6, type, metric);
   bgp_redistribute_rmap_set (vty->index, AFI_IP6, type, argv[2]);
-  return bgp_redistribute_set (vty->index, AFI_IP6, type);
+  return bgp_redistribute_set (vty->index, AFI_IP6, type, safi);
 }
 
 DEFUN (no_bgp_redistribute_ipv6,
@@ -8633,15 +8655,17 @@ DEFUN (no_bgp_redistribute_ipv6,
        "Static routes\n")
 {
   int type;
+  safi_t safi;
 
   type = bgp_str2route_type (AFI_IP6, argv[0]);
+  safi = bgp_node_safi (vty);
   if (! type)
     {
       vty_out (vty, "%% Invalid route type%s", VTY_NEWLINE);
       return CMD_WARNING;
     }
 
-  return bgp_redistribute_unset (vty->index, AFI_IP6, type);
+  return bgp_redistribute_unset (vty->index, AFI_IP6, type, safi);
 }
 
 DEFUN (no_bgp_redistribute_ipv6_rmap,
@@ -9905,6 +9929,11 @@ bgp_vty_init (void)
   install_element (VIEW_NODE, &show_bgp_views_cmd);
   install_element (RESTRICTED_NODE, &show_bgp_views_cmd);
   install_element (ENABLE_NODE, &show_bgp_views_cmd);
+
+  /* Multicast BGP CLI commands */
+  install_element (BGP_IPV4M_NODE, &bgp_redistribute_ipv4_cmd);
+  install_element (BGP_IPV4M_NODE, &no_bgp_redistribute_ipv4_cmd);
+  install_element (BGP_IPV6M_NODE, &bgp_redistribute_ipv6_cmd);
   
   /* Community-list. */
   community_list_vty ();

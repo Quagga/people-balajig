@@ -361,7 +361,7 @@ zsend_interface_update (int cmd, struct zserv *client, struct interface *ifp)
  */
 int
 zsend_route_multipath (int cmd, struct zserv *client, struct prefix *p,
-                       struct rib *rib)
+                       struct rib *rib, safi_t safi)
 {
   int psize;
   struct stream *s;
@@ -369,7 +369,7 @@ zsend_route_multipath (int cmd, struct zserv *client, struct prefix *p,
   unsigned long nhnummark = 0, messmark = 0;
   int nhnum = 0;
   u_char zapi_flags = 0;
-  
+
   s = client->obuf;
   stream_reset (s);
   
@@ -377,6 +377,7 @@ zsend_route_multipath (int cmd, struct zserv *client, struct prefix *p,
   
   /* Put type and nexthop. */
   stream_putc (s, rib->type);
+  stream_putw (s, safi);
   stream_putc (s, rib->flags);
   
   /* marker for message flags field */

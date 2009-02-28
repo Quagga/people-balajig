@@ -134,10 +134,10 @@ extern int zclient_socket (void);
 extern int zclient_socket_un (const char *);
 
 /* Send redistribute command to zebra daemon. Do not update zclient state. */
-extern int zebra_redistribute_send (int command, struct zclient *, int type);
+extern int zebra_redistribute_send (int command, struct zclient *, int type, safi_t);
 
 /* If state has changed, update state and call zebra_redistribute_send. */
-extern void zclient_redistribute (int command, struct zclient *, int type);
+extern void zclient_redistribute (int command, struct zclient *, int type, safi_t);
 
 /* If state has changed, update state and send the command to zebra. */
 extern void zclient_redistribute_default (int command, struct zclient *);

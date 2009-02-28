@@ -242,7 +242,7 @@ rip_redistribute_set (int type)
   zclient->redist[type] = 1;
 
   if (zclient->sock > 0)
-    zebra_redistribute_send (ZEBRA_REDISTRIBUTE_ADD, zclient, type);
+    zebra_redistribute_send (ZEBRA_REDISTRIBUTE_ADD, zclient, type, SAFI_UNICAST);
 
   return CMD_SUCCESS;
 }
@@ -256,7 +256,7 @@ rip_redistribute_unset (int type)
   zclient->redist[type] = 0;
 
   if (zclient->sock > 0)
-    zebra_redistribute_send (ZEBRA_REDISTRIBUTE_DELETE, zclient, type);
+    zebra_redistribute_send (ZEBRA_REDISTRIBUTE_DELETE, zclient, type, SAFI_UNICAST);
 
   /* Remove the routes from RIP table. */
   rip_redistribute_withdraw (type);
@@ -281,7 +281,7 @@ rip_redistribute_clean (void)
 	{
 	  if (zclient->sock > 0)
 	    zebra_redistribute_send (ZEBRA_REDISTRIBUTE_DELETE,
-				     zclient, redist_type[i].type);
+				     zclient, redist_type[i].type, SAFI_UNICAST);
 
 	  zclient->redist[redist_type[i].type] = 0;
 
@@ -326,7 +326,7 @@ DEFUN (rip_redistribute_type,
 		   redist_type[i].str_min_len) == 0) 
 	{
 	  zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, 
-	                        redist_type[i].type);
+	                        redist_type[i].type, SAFI_UNICAST);
 	  return CMD_SUCCESS;
 	}
     }
@@ -379,7 +379,7 @@ DEFUN (rip_redistribute_type_routemap,
 		redist_type[i].str_min_len) == 0) 
       {
 	rip_routemap_set (redist_type[i].type, argv[1]);
-	zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, redist_type[i].type);
+	zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, redist_type[i].type, SAFI_UNICAST);
 	return CMD_SUCCESS;
       }
   }
@@ -437,7 +437,7 @@ DEFUN (rip_redistribute_type_metric,
 		redist_type[i].str_min_len) == 0) 
       {
 	rip_redistribute_metric_set (redist_type[i].type, metric);
-	zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, redist_type[i].type);
+	zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, redist_type[i].type, SAFI_UNICAST);
 	return CMD_SUCCESS;
       }
   }
@@ -498,7 +498,7 @@ DEFUN (rip_redistribute_type_metric_routemap,
       {
 	rip_redistribute_metric_set (redist_type[i].type, metric);
 	rip_routemap_set (redist_type[i].type, argv[2]);
-	zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, redist_type[i].type);
+	zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, redist_type[i].type, SAFI_UNICAST);
 	return CMD_SUCCESS;
       }
   }

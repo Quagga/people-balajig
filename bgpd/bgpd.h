@@ -131,7 +131,7 @@ struct bgp
   struct bgp_table *rib[AFI_MAX][SAFI_MAX];
 
   /* BGP redistribute configuration. */
-  u_char redist[AFI_MAX][ZEBRA_ROUTE_MAX];
+  u_char redist[AFI_MAX][SAFI_MAX][ZEBRA_ROUTE_MAX];
 
   /* BGP redistribute metric configuration. */
   u_char redist_metric_flag[AFI_MAX][ZEBRA_ROUTE_MAX];

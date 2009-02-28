@@ -555,7 +555,7 @@ ospf_redistribute_set (struct ospf *ospf, int type, int mtype, int mvalue)
   ospf->dmetric[type].type = mtype;
   ospf->dmetric[type].value = mvalue;
 
-  zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, type);
+  zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, type, SAFI_UNICAST);
 
   if (IS_DEBUG_OSPF (zebra, ZEBRA_REDISTRIBUTE))
     zlog_debug ("Redistribute[%s]: Start  Type[%d], Metric[%d]",
@@ -576,7 +576,7 @@ ospf_redistribute_unset (struct ospf *ospf, int type)
   if (!ospf_is_type_redistributed (type))
     return CMD_SUCCESS;
 
-  zclient_redistribute (ZEBRA_REDISTRIBUTE_DELETE, zclient, type);
+  zclient_redistribute (ZEBRA_REDISTRIBUTE_DELETE, zclient, type, SAFI_UNICAST);
 
   if (IS_DEBUG_OSPF (zebra, ZEBRA_REDISTRIBUTE))
     zlog_debug ("Redistribute[%s]: Stop",

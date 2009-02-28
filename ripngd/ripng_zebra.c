@@ -157,7 +157,7 @@ ripng_redistribute_unset (int type)
   zclient->redist[type] = 0;
 
   if (zclient->sock > 0)
-    zebra_redistribute_send (ZEBRA_REDISTRIBUTE_DELETE, zclient, type);
+    zebra_redistribute_send (ZEBRA_REDISTRIBUTE_DELETE, zclient, type, SAFI_UNICAST);
 
   ripng_redistribute_withdraw (type);
   
@@ -230,7 +230,7 @@ ripng_redistribute_clean ()
         {
           if (zclient->sock > 0)
             zebra_redistribute_send (ZEBRA_REDISTRIBUTE_DELETE,
-                                     zclient, redist_type[i].type);
+                                     zclient, redist_type[i].type, SAFI_UNICAST);
 
           zclient->redist[redist_type[i].type] = 0;
 
@@ -302,7 +302,7 @@ DEFUN (ripng_redistribute_type,
       if (strncmp (redist_type[i].str, argv[0], 
 		   redist_type[i].str_min_len) == 0) 
 	{
-	  zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, redist_type[i].type);
+	  zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, redist_type[i].type, SAFI_UNICAST);
 	  return CMD_SUCCESS;
 	}
     }
@@ -366,7 +366,7 @@ DEFUN (ripng_redistribute_type_metric,
 		redist_type[i].str_min_len) == 0) 
       {
 	ripng_redistribute_metric_set (redist_type[i].type, metric);
-	zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, redist_type[i].type);
+	zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, redist_type[i].type, SAFI_UNICAST);
 	return CMD_SUCCESS;
       }
   }
@@ -409,7 +409,7 @@ DEFUN (ripng_redistribute_type_routemap,
 		redist_type[i].str_min_len) == 0) 
       {
 	ripng_redistribute_routemap_set (redist_type[i].type, argv[1]);
-	zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, redist_type[i].type);
+	zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, redist_type[i].type, SAFI_UNICAST);
 	return CMD_SUCCESS;
       }
   }
@@ -458,7 +458,7 @@ DEFUN (ripng_redistribute_type_metric_routemap,
       {
 	ripng_redistribute_metric_set (redist_type[i].type, metric);
 	ripng_redistribute_routemap_set (redist_type[i].type, argv[2]);
-	zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, redist_type[i].type);
+	zclient_redistribute (ZEBRA_REDISTRIBUTE_ADD, zclient, redist_type[i].type, SAFI_UNICAST);
 	return CMD_SUCCESS;
       }
   }
