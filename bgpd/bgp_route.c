@@ -5495,7 +5495,7 @@ bgp_redistribute_add (struct prefix *p, struct in_addr *nexthop,
 	  bgp_aggregate_increment (bgp, p, new, afi, SAFI_UNICAST);
 	  bgp_info_add (bn, new);
 	  bgp_unlock_node (bn);
-	  bgp_process (bgp, bn, afi, SAFI_UNICAST);
+	  bgp_process (bgp, bn, afi, safi);
 	}
     }
 
