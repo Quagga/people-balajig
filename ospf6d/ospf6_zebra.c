@@ -72,7 +72,7 @@ ospf6_zebra_redistribute (int type)
 {
   if (zclient->redist[type])
     return;
-  zclient->redist[type] = 1;
+  zclient->redist[SAFI_UNICAST][type] = 1;
   if (zclient->sock > 0)
     zebra_redistribute_send (ZEBRA_REDISTRIBUTE_ADD, zclient, type, SAFI_UNICAST);
 }
@@ -80,9 +80,9 @@ ospf6_zebra_redistribute (int type)
 void
 ospf6_zebra_no_redistribute (int type)
 {
-  if (! zclient->redist[type])
+  if (! zclient->redist[SAFI_UNICAST][type])
     return;
-  zclient->redist[type] = 0;
+  zclient->redist[SAFI_UNICAST][type] = 0;
   if (zclient->sock > 0)
     zebra_redistribute_send (ZEBRA_REDISTRIBUTE_DELETE, zclient, type, SAFI_UNICAST);
 }
@@ -508,7 +508,7 @@ DEFUN (redistribute_ospf6,
   if (zclient->redist[ZEBRA_ROUTE_OSPF6])
     return CMD_SUCCESS;
 
-  zclient->redist[ZEBRA_ROUTE_OSPF6] = 1;
+  zclient->redist[SAFI_UNICAST][ZEBRA_ROUTE_OSPF6] = 1;
 
   if (ospf6 == NULL)
     return CMD_SUCCESS;
@@ -536,7 +536,7 @@ DEFUN (no_redistribute_ospf6,
   if (! zclient->redist[ZEBRA_ROUTE_OSPF6])
     return CMD_SUCCESS;
 
-  zclient->redist[ZEBRA_ROUTE_OSPF6] = 0;
+  zclient->redist[SAFI_UNICAST][ZEBRA_ROUTE_OSPF6] = 0;
 
   if (ospf6 == NULL)
     return CMD_SUCCESS;

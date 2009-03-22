@@ -936,10 +936,10 @@ bgp_redistribute_set (struct bgp *bgp, afi_t afi, int type, safi_t safi)
   bgp->redist[afi][safi][type] = 1;
 
   /* Return if already redistribute flag is set. */
-  if (zclient->redist[type])
+  if (zclient->redist[safi][type])
     return CMD_WARNING;
 
-  zclient->redist[type] = 1;
+  zclient->redist[safi][type] = 1;
 
   /* Return if zebra connection is not established. */
   if (zclient->sock < 0)
@@ -1004,9 +1004,9 @@ bgp_redistribute_unset (struct bgp *bgp, afi_t afi, int type, safi_t safi)
   bgp->redist_metric[afi][type] = 0;
 
   /* Return if zebra connection is disabled. */
-  if (! zclient->redist[type])
+  if (! zclient->redist[safi][type])
     return CMD_WARNING;
-  zclient->redist[type] = 0;
+  zclient->redist[safi][type] = 0;
 
   if (bgp->redist[AFI_IP][safi][type] == 0 
       && bgp->redist[AFI_IP6][safi][type] == 0 

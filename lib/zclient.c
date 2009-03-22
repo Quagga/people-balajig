@@ -86,6 +86,7 @@ void
 zclient_init (struct zclient *zclient, int redist_default)
 {
   int i;
+  safi_t safi;
   
   /* Enable zebra client connection by default. */
   zclient->enable = 1;
@@ -94,13 +95,15 @@ zclient_init (struct zclient *zclient, int redist_default)
   zclient->sock = -1;
 
   /* Clear redistribution flags. */
-  for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
-    zclient->redist[i] = 0;
+  for (safi = SAFI_UNICAST; safi < SAFI_MAX; safi++)
+    for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
+    zclient->redist[safi][i] = 0;
 
   /* Set unwanted redistribute route.  bgpd does not need BGP route
      redistribution. */
   zclient->redist_default = redist_default;
-  zclient->redist[redist_default] = 1;
+  for (safi = SAFI_UNICAST; safi < SAFI_MAX; safi++)
+    zclient->redist[safi][redist_default] = 1;
 
   /* Set default-information redistribute to zero. */
   zclient->default_information = 0;
@@ -966,13 +969,13 @@ zclient_redistribute (int command, struct zclient *zclient, int type, safi_t saf
     {
       if (zclient->redist[type])
          return;
-      zclient->redist[type] = 1;
+      zclient->redist[safi][type] = 1;
     }
   else
     {
-      if (!zclient->redist[type])
+      if (!zclient->redist[safi][type])
          return;
-      zclient->redist[type] = 0;
+      zclient->redist[safi][type] = 0;
     }
 
   if (zclient->sock > 0)

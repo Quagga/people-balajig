@@ -239,7 +239,7 @@ rip_redistribute_set (int type)
   if (zclient->redist[type])
     return CMD_SUCCESS;
 
-  zclient->redist[type] = 1;
+  zclient->redist[SAFI_UNICAST][type] = 1;
 
   if (zclient->sock > 0)
     zebra_redistribute_send (ZEBRA_REDISTRIBUTE_ADD, zclient, type, SAFI_UNICAST);
@@ -253,7 +253,7 @@ rip_redistribute_unset (int type)
   if (! zclient->redist[type])
     return CMD_SUCCESS;
 
-  zclient->redist[type] = 0;
+  zclient->redist[SAFI_UNICAST][type] = 0;
 
   if (zclient->sock > 0)
     zebra_redistribute_send (ZEBRA_REDISTRIBUTE_DELETE, zclient, type, SAFI_UNICAST);
@@ -283,7 +283,7 @@ rip_redistribute_clean (void)
 	    zebra_redistribute_send (ZEBRA_REDISTRIBUTE_DELETE,
 				     zclient, redist_type[i].type, SAFI_UNICAST);
 
-	  zclient->redist[redist_type[i].type] = 0;
+	  zclient->redist[SAFI_UNICAST][redist_type[i].type] = 0;
 
 	  /* Remove the routes from RIP table. */
 	  rip_redistribute_withdraw (redist_type[i].type);
@@ -297,7 +297,7 @@ DEFUN (rip_redistribute_rip,
        "Redistribute information from another routing protocol\n"
        "Routing Information Protocol (RIP)\n")
 {
-  zclient->redist[ZEBRA_ROUTE_RIP] = 1;
+  zclient->redist[SAFI_UNICAST][ZEBRA_ROUTE_RIP] = 1;
   return CMD_SUCCESS;
 }
 
@@ -308,7 +308,7 @@ DEFUN (no_rip_redistribute_rip,
        "Redistribute information from another routing protocol\n"
        "Routing Information Protocol (RIP)\n")
 {
-  zclient->redist[ZEBRA_ROUTE_RIP] = 0;
+  zclient->redist[SAFI_UNICAST][ZEBRA_ROUTE_RIP] = 0;
   return CMD_SUCCESS;
 }
 

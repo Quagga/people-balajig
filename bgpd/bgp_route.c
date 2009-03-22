@@ -5403,7 +5403,7 @@ bgp_redistribute_add (struct prefix *p, struct in_addr *nexthop,
     {
       afi = family2afi (p->family);
 
-      if (bgp->redist[afi][type])
+      if (bgp->redist[afi][safi][type])
 	{
 	  /* Copy attribute for modification. */
 	  bgp_attr_dup (&attr_new, &attr);
@@ -5517,7 +5517,7 @@ bgp_redistribute_delete (struct prefix *p, u_char type, safi_t safi)
     {
       afi = family2afi (p->family);
 
-      if (bgp->redist[afi][type])
+      if (bgp->redist[afi][safi][type])
 	{
          rn = bgp_afi_node_get (bgp->rib[afi][safi], afi, safi, p, NULL);
 

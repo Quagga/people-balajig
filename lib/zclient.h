@@ -62,7 +62,7 @@ struct zclient
 
   /* Redistribute information. */
   u_char redist_default;
-  u_char redist[ZEBRA_ROUTE_MAX];
+  u_char redist[SAFI_MAX][ZEBRA_ROUTE_MAX];
 
   /* Redistribute defauilt. */
   u_char default_information;

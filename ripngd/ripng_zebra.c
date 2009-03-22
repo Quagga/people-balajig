@@ -154,7 +154,7 @@ ripng_redistribute_unset (int type)
   if (! zclient->redist[type])
     return CMD_SUCCESS;
 
-  zclient->redist[type] = 0;
+  zclient->redist[SAFI_UNICAST][type] = 0;
 
   if (zclient->sock > 0)
     zebra_redistribute_send (ZEBRA_REDISTRIBUTE_DELETE, zclient, type, SAFI_UNICAST);
@@ -167,7 +167,7 @@ ripng_redistribute_unset (int type)
 int
 ripng_redistribute_check (int type)
 {
-  return (zclient->redist[type]);
+  return (zclient->redist[SAFI_UNICAST][type]);
 }
 
 static void
@@ -232,7 +232,7 @@ ripng_redistribute_clean ()
             zebra_redistribute_send (ZEBRA_REDISTRIBUTE_DELETE,
                                      zclient, redist_type[i].type, SAFI_UNICAST);
 
-          zclient->redist[redist_type[i].type] = 0;
+          zclient->redist[SAFI_UNICAST][redist_type[i].type] = 0;
 
           /* Remove the routes from RIPng table. */
           ripng_redistribute_withdraw (redist_type[i].type);
@@ -270,7 +270,7 @@ DEFUN (ripng_redistribute_ripng,
        "Redistribute information from another routing protocol\n"
        "RIPng route\n")
 {
-  zclient->redist[ZEBRA_ROUTE_RIPNG] = 1;
+  zclient->redist[SAFI_UNICAST][ZEBRA_ROUTE_RIPNG] = 1;
   return CMD_SUCCESS;
 }
 
@@ -281,7 +281,7 @@ DEFUN (no_ripng_redistribute_ripng,
        "Redistribute information from another routing protocol\n"
        "RIPng route\n")
 {
-  zclient->redist[ZEBRA_ROUTE_RIPNG] = 0;
+  zclient->redist[SAFI_UNICAST][ZEBRA_ROUTE_RIPNG] = 0;
   return CMD_SUCCESS;
 }
 

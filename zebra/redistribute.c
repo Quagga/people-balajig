@@ -145,6 +145,19 @@ zebra_redistribute (struct zserv *client, int type, safi_t safi)
   struct route_table *table;
   struct route_node *rn;
 
+  /*
+   * Ok, we cannot look up the M-RIB for IGP routes.Hence we need to 
+   * lookup the M-RIB only if the safi type is SAFI_MULTICAST and route 
+   * type is M-Static/Connected/Kernel routes.
+   * The IGP routes need to be looked up from the Unicast RIB.
+   */
+  if((SAFI_MULTICAST == safi) && ((ZEBRA_ROUTE_STATIC == type) || 
+                                  (ZEBRA_ROUTE_CONNECT == type) ||
+				  (ZEBRA_ROUTE_KERNEL == type)))
+    safi = SAFI_MULTICAST;
+  else
+    safi = SAFI_UNICAST;
+
   table = vrf_table (AFI_IP, safi, 0);
   if (table)
     for (rn = route_top (table); rn; rn = route_next (rn))
@@ -156,7 +169,12 @@ zebra_redistribute (struct zserv *client, int type, safi_t safi)
 	  zsend_route_multipath (ZEBRA_IPV4_ROUTE_ADD, client, &rn->p, newrib, safi);
   
 #ifdef HAVE_IPV6
-  table = vrf_table (AFI_IP6, safi, 0);
+  if((SAFI_MULTICAST == safi) && ((ZEBRA_ROUTE_STATIC == type) || 
+                                  (ZEBRA_ROUTE_CONNECT == type) ||
+				  (ZEBRA_ROUTE_KERNEL == type)))
+    table = vrf_table (AFI_IP, SAFI_MULTICAST, 0);
+  else
+    table = vrf_table (AFI_IP, SAFI_UNICAST, 0);
   if (table)
     for (rn = route_top (table); rn; rn = route_next (rn))
       for (newrib = rn->info; newrib; newrib = newrib->next)
@@ -257,9 +275,9 @@ zebra_redistribute_add (int command, struct zserv *client, int length)
     case ZEBRA_ROUTE_OSPF:
     case ZEBRA_ROUTE_OSPF6:
     case ZEBRA_ROUTE_BGP:
-      if (! client->redist[type])
+      if (! client->redist[safi][type])
 	{
-	  client->redist[type] = 1;
+	  client->redist[safi][type] = 1;
 	  zebra_redistribute (client, type, safi);
 	}
       break;
@@ -287,7 +305,7 @@ zebra_redistribute_delete (int command, struct zserv *client, int length)
     case ZEBRA_ROUTE_OSPF:
     case ZEBRA_ROUTE_OSPF6:
     case ZEBRA_ROUTE_BGP:
-      client->redist[type] = 0;
+      client->redist[safi][type] = 0;
       break;
     default:
       break;
