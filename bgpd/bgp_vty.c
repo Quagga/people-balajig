@@ -9933,7 +9933,16 @@ bgp_vty_init (void)
   /* Multicast BGP CLI commands */
   install_element (BGP_IPV4M_NODE, &bgp_redistribute_ipv4_cmd);
   install_element (BGP_IPV4M_NODE, &no_bgp_redistribute_ipv4_cmd);
+  install_element (BGP_IPV4_NODE, &bgp_redistribute_ipv4_cmd);
+  install_element (BGP_IPV4_NODE, &no_bgp_redistribute_ipv4_cmd);
+
+
+#ifdef HAVE_IPV6
   install_element (BGP_IPV6M_NODE, &bgp_redistribute_ipv6_cmd);
+  install_element (BGP_IPV6M_NODE, &no_bgp_redistribute_ipv6_cmd);
+  install_element (BGP_IPV6_NODE, &bgp_redistribute_ipv6_cmd);
+  install_element (BGP_IPV6_NODE, &no_bgp_redistribute_ipv6_cmd);
+#endif
   
   /* Community-list. */
   community_list_vty ();
