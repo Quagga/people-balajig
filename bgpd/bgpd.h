@@ -134,8 +134,8 @@ struct bgp
   u_char redist[AFI_MAX][SAFI_MAX][ZEBRA_ROUTE_MAX];
 
   /* BGP redistribute metric configuration. */
-  u_char redist_metric_flag[AFI_MAX][ZEBRA_ROUTE_MAX];
-  u_int32_t redist_metric[AFI_MAX][ZEBRA_ROUTE_MAX];
+  u_char redist_metric_flag[AFI_MAX][SAFI_MAX][ZEBRA_ROUTE_MAX];
+  u_int32_t redist_metric[AFI_MAX][SAFI_MAX][ZEBRA_ROUTE_MAX];
 
   /* BGP redistribute route-map.  */
   struct

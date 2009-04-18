@@ -974,14 +974,14 @@ bgp_redistribute_rmap_set (struct bgp *bgp, afi_t afi, int type,
 /* Redistribute with metric specification.  */
 int
 bgp_redistribute_metric_set (struct bgp *bgp, afi_t afi, int type,
-			     u_int32_t metric)
+			     u_int32_t metric, safi_t safi)
 {
-  if (bgp->redist_metric_flag[afi][type]
-      && bgp->redist_metric[afi][type] == metric)
+  if (bgp->redist_metric_flag[afi][safi][type]
+      && bgp->redist_metric[afi][safi][type] == metric)
     return 0;
 
-  bgp->redist_metric_flag[afi][type] = 1;
-  bgp->redist_metric[afi][type] = metric;
+  bgp->redist_metric_flag[afi][safi][type] = 1;
+  bgp->redist_metric[afi][safi][type] = metric;
 
   return 1;
 }
@@ -1000,8 +1000,8 @@ bgp_redistribute_unset (struct bgp *bgp, afi_t afi, int type, safi_t safi)
   bgp->rmap[afi][type].map = NULL;
 
   /* Unset metric. */
-  bgp->redist_metric_flag[afi][type] = 0;
-  bgp->redist_metric[afi][type] = 0;
+  bgp->redist_metric_flag[afi][safi][type] = 0;
+  bgp->redist_metric[afi][safi][type] = 0;
 
   /* Return if zebra connection is disabled. */
   if (! zclient->redist[safi][type])
@@ -1042,14 +1042,14 @@ bgp_redistribute_routemap_unset (struct bgp *bgp, afi_t afi, int type)
 
 /* Unset redistribution metric configuration.  */
 int
-bgp_redistribute_metric_unset (struct bgp *bgp, afi_t afi, int type)
+bgp_redistribute_metric_unset (struct bgp *bgp, afi_t afi, int type, safi_t safi)
 {
-  if (! bgp->redist_metric_flag[afi][type])
+  if (! bgp->redist_metric_flag[afi][safi][type])
     return 0;
 
   /* Unset metric. */
-  bgp->redist_metric_flag[afi][type] = 0;
-  bgp->redist_metric[afi][type] = 0;
+  bgp->redist_metric_flag[afi][safi][type] = 0;
+  bgp->redist_metric[afi][safi][type] = 0;
 
   return 1;
 }

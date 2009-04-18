@@ -5408,8 +5408,8 @@ bgp_redistribute_add (struct prefix *p, struct in_addr *nexthop,
 	  /* Copy attribute for modification. */
 	  bgp_attr_dup (&attr_new, &attr);
 
-	  if (bgp->redist_metric_flag[afi][type])
-	    attr_new.med = bgp->redist_metric[afi][type];
+	  if (bgp->redist_metric_flag[afi][safi][type])
+	    attr_new.med = bgp->redist_metric[afi][safi][type];
 
 	  /* Apply route-map. */
 	  if (bgp->rmap[afi][type].map)
