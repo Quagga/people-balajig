@@ -9964,6 +9964,11 @@ bgp_vty_init (void)
 
   install_element (BGP_IPV6M_NODE, &bgp_redistribute_ipv6_metric_cmd);
   install_element (BGP_IPV6M_NODE, &no_bgp_redistribute_ipv6_metric_cmd);
+
+  install_element (BGP_IPV6M_NODE, &bgp_redistribute_ipv6_rmap_metric_cmd);
+  install_element (BGP_IPV6M_NODE, &bgp_redistribute_ipv6_metric_rmap_cmd);
+  install_element (BGP_IPV6M_NODE, &no_bgp_redistribute_ipv6_rmap_metric_cmd);
+  install_element (BGP_IPV6M_NODE, &no_bgp_redistribute_ipv6_metric_rmap_cmd);
 #endif
   
   /* Community-list. */
