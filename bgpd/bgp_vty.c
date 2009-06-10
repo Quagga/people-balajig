@@ -9948,6 +9948,9 @@ bgp_vty_init (void)
   install_element (BGP_IPV4M_NODE, &bgp_redistribute_ipv4_metric_cmd);
   install_element (BGP_IPV4M_NODE, &no_bgp_redistribute_ipv4_metric_cmd);
 
+  install_element (BGP_IPV4M_NODE, &bgp_redistribute_ipv4_rmap_cmd);
+  install_element (BGP_IPV4M_NODE, &no_bgp_redistribute_ipv4_rmap_cmd);
+
   /* Unicast Mode BGP CLI commands */
   install_element (BGP_IPV4_NODE, &bgp_redistribute_ipv4_cmd);
   install_element (BGP_IPV4_NODE, &no_bgp_redistribute_ipv4_cmd);
