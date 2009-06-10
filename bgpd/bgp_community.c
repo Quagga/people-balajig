@@ -78,7 +78,7 @@ community_del_val (struct community *com, u_int32_t *val)
 	  c = com->size -i -1;
 
 	  if (c > 0)
-	    memcpy (com->val + i, com->val + (i + 1), c * sizeof (val));
+	    memcpy (com->val + i, com->val + (i + 1), c * sizeof (*val));
 
 	  com->size--;
 
@@ -282,7 +282,7 @@ community_com2str  (struct community *com)
 	default:
 	  as = (comval >> 16) & 0xFFFF;
 	  val = comval & 0xFFFF;
-	  sprintf (pnt, "%d:%d", as, val);
+	  sprintf (pnt, "%u:%d", as, val);
 	  pnt += strlen (pnt);
 	  break;
 	}

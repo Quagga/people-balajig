@@ -97,7 +97,7 @@ ecommunity_add_val (struct ecommunity *ecom, struct ecommunity_val *eval)
 
 /* This function takes pointer to Extended Communites strucutre then
    create a new Extended Communities structure by uniq and sort each
-   Exteneded Communities value.  */
+   Extended Communities value.  */
 static struct ecommunity *
 ecommunity_uniq_sort (struct ecommunity *ecom)
 {
@@ -673,7 +673,7 @@ ecommunity_ecom2str (struct ecommunity *ecom, int format)
 	  eas.val = (*pnt++ << 8);
 	  eas.val |= (*pnt++);
 
-	  len = sprintf( str_buf + str_pnt, "%s%d:%d", prefix,
+	  len = sprintf( str_buf + str_pnt, "%s%u:%d", prefix,
                         eas.as, eas.val );
 	  str_pnt += len;
 	  first = 0;
@@ -688,7 +688,7 @@ ecommunity_ecom2str (struct ecommunity *ecom, int format)
 	  eas.val |= (*pnt++ << 8);
 	  eas.val |= (*pnt++);
 
-	  len = sprintf (str_buf + str_pnt, "%s%d:%d", prefix,
+	  len = sprintf (str_buf + str_pnt, "%s%u:%d", prefix,
 			 eas.as, eas.val);
 	  str_pnt += len;
 	  first = 0;
