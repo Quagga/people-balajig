@@ -990,7 +990,9 @@ bgp_redistribute_metric_set (struct bgp *bgp, afi_t afi, int type,
 int
 bgp_redistribute_unset (struct bgp *bgp, afi_t afi, int type, safi_t safi)
 {
-  /* Unset flag from BGP instance. */
+  /* Unset flag from BGP instance.
+   * This is done for SAFI too 
+   */
   bgp->redist[afi][safi][type] = 0;
 
   /* Unset route-map. */
