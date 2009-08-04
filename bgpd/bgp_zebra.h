@@ -29,10 +29,10 @@ extern void bgp_zebra_announce (struct prefix *, struct bgp_info *, struct bgp *
 extern void bgp_zebra_withdraw (struct prefix *, struct bgp_info *, safi_t safi);
 
 extern int bgp_redistribute_set (struct bgp *, afi_t, int, safi_t);
-extern int bgp_redistribute_rmap_set (struct bgp *, afi_t, int, const char *);
+extern int bgp_redistribute_rmap_set (struct bgp *, afi_t, safi_t, int, const char *);
 extern int bgp_redistribute_metric_set (struct bgp *, afi_t, int, u_int32_t, safi_t);
 extern int bgp_redistribute_unset (struct bgp *, afi_t, int, safi_t);
-extern int bgp_redistribute_routemap_unset (struct bgp *, afi_t, int);
+extern int bgp_redistribute_routemap_unset (struct bgp *, afi_t, safi_t, int);
 extern int bgp_redistribute_metric_unset (struct bgp *, afi_t, int, safi_t);
 
 extern struct interface *if_lookup_by_ipv4 (struct in_addr *);

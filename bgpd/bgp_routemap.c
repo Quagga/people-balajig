@@ -2396,17 +2396,21 @@ bgp_route_map_update (const char *unused)
   /* For redistribute route-map updates. */
   for (ALL_LIST_ELEMENTS (bm->bgp, mnode, mnnode, bgp))
     {
-      for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
-	{
-	  if (bgp->rmap[ZEBRA_FAMILY_IPV4][i].name)
-	    bgp->rmap[ZEBRA_FAMILY_IPV4][i].map = 
-	      route_map_lookup_by_name (bgp->rmap[ZEBRA_FAMILY_IPV4][i].name);
+      for (afi = AFI_IP; afi < AFI_MAX; afi++)
+	for (safi = SAFI_UNICAST; safi < SAFI_MAX; safi++)
+      {
+	for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
+	  {
+	    if (bgp->rmap[ZEBRA_FAMILY_IPV4][safi][i].name)
+	      bgp->rmap[ZEBRA_FAMILY_IPV4][safi][i].map = 
+		route_map_lookup_by_name (bgp->rmap[ZEBRA_FAMILY_IPV4][safi][i].name);
 #ifdef HAVE_IPV6
-	  if (bgp->rmap[ZEBRA_FAMILY_IPV6][i].name)
-	    bgp->rmap[ZEBRA_FAMILY_IPV6][i].map =
-	      route_map_lookup_by_name (bgp->rmap[ZEBRA_FAMILY_IPV6][i].name);
+	    if (bgp->rmap[ZEBRA_FAMILY_IPV6][safi][i].name)
+	      bgp->rmap[ZEBRA_FAMILY_IPV6][safi][i].map =
+		route_map_lookup_by_name (bgp->rmap[ZEBRA_FAMILY_IPV6][safi][i].name);
 #endif /* HAVE_IPV6 */
 	}
+      }
     }
 }
 

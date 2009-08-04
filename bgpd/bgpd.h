@@ -142,7 +142,7 @@ struct bgp
   {
     char *name;
     struct route_map *map;
-  } rmap[AFI_MAX][ZEBRA_ROUTE_MAX];
+  } rmap[AFI_MAX][SAFI_MAX][ZEBRA_ROUTE_MAX];
 
   /* BGP distance configuration.  */
   u_char distance_ebgp;

@@ -8280,7 +8280,7 @@ DEFUN (bgp_redistribute_ipv4_rmap,
       return CMD_WARNING;
     }
 
-  bgp_redistribute_rmap_set (vty->index, AFI_IP, type, argv[1]);
+  bgp_redistribute_rmap_set (vty->index, AFI_IP, safi, type, argv[1]);
   return bgp_redistribute_set (vty->index, AFI_IP, type, safi);
 }
 
@@ -8340,7 +8340,7 @@ DEFUN (bgp_redistribute_ipv4_rmap_metric,
     }
   VTY_GET_INTEGER ("metric", metric, argv[2]);
 
-  bgp_redistribute_rmap_set (vty->index, AFI_IP, type, argv[1]);
+  bgp_redistribute_rmap_set (vty->index, AFI_IP, safi, type, argv[1]);
   bgp_redistribute_metric_set (vty->index, AFI_IP, type, metric, safi);
   return bgp_redistribute_set (vty->index, AFI_IP, type, safi);
 }
@@ -8373,7 +8373,7 @@ DEFUN (bgp_redistribute_ipv4_metric_rmap,
   VTY_GET_INTEGER ("metric", metric, argv[1]);
 
   bgp_redistribute_metric_set (vty->index, AFI_IP, type, metric, safi);
-  bgp_redistribute_rmap_set (vty->index, AFI_IP, type, argv[2]);
+  bgp_redistribute_rmap_set (vty->index, AFI_IP, safi, type, argv[2]);
   return bgp_redistribute_set (vty->index, AFI_IP, type, safi);
 }
 
@@ -8416,7 +8416,8 @@ DEFUN (no_bgp_redistribute_ipv4_rmap,
        "Pointer to route-map entries\n")
 {
   int type;
-
+  safi_t safi;
+  safi = bgp_node_safi (vty);
   type = bgp_str2route_type (AFI_IP, argv[0]);
   if (! type)
     {
@@ -8424,7 +8425,7 @@ DEFUN (no_bgp_redistribute_ipv4_rmap,
       return CMD_WARNING;
     }
 
-  bgp_redistribute_routemap_unset (vty->index, AFI_IP, type);
+  bgp_redistribute_routemap_unset (vty->index, AFI_IP, safi, type);
   return CMD_SUCCESS;
 }
 
@@ -8473,10 +8474,7 @@ DEFUN (no_bgp_redistribute_ipv4_rmap_metric,
 {
   int type;
   safi_t safi;
-
   safi = bgp_node_safi (vty);
-
-
   type = bgp_str2route_type (AFI_IP, argv[0]);
   if (! type)
     {
@@ -8485,7 +8483,7 @@ DEFUN (no_bgp_redistribute_ipv4_rmap_metric,
     }
 
   bgp_redistribute_metric_unset (vty->index, AFI_IP, type, safi);
-  bgp_redistribute_routemap_unset (vty->index, AFI_IP, type);
+  bgp_redistribute_routemap_unset (vty->index, AFI_IP, safi, type);
   return CMD_SUCCESS;
 }
 
@@ -8552,7 +8550,7 @@ DEFUN (bgp_redistribute_ipv6_rmap,
       return CMD_WARNING;
     }
 
-  bgp_redistribute_rmap_set (vty->index, AFI_IP6, type, argv[1]);
+  bgp_redistribute_rmap_set (vty->index, AFI_IP6, safi, type, argv[1]);
   return bgp_redistribute_set (vty->index, AFI_IP6, type, safi);
 }
 
@@ -8612,7 +8610,7 @@ DEFUN (bgp_redistribute_ipv6_rmap_metric,
     }
   VTY_GET_INTEGER ("metric", metric, argv[2]);
 
-  bgp_redistribute_rmap_set (vty->index, AFI_IP6, type, argv[1]);
+  bgp_redistribute_rmap_set (vty->index, AFI_IP6, safi, type, argv[1]);
   bgp_redistribute_metric_set (vty->index, AFI_IP6, type, metric, safi);
   return bgp_redistribute_set (vty->index, AFI_IP6, type, safi);
 }
@@ -8645,7 +8643,7 @@ DEFUN (bgp_redistribute_ipv6_metric_rmap,
   VTY_GET_INTEGER ("metric", metric, argv[1]);
 
   bgp_redistribute_metric_set (vty->index, AFI_IP6, type, metric, safi);
-  bgp_redistribute_rmap_set (vty->index, AFI_IP6, type, argv[2]);
+  bgp_redistribute_rmap_set (vty->index, AFI_IP6, safi, type, argv[2]);
   return bgp_redistribute_set (vty->index, AFI_IP6, type, safi);
 }
 
@@ -8688,7 +8686,9 @@ DEFUN (no_bgp_redistribute_ipv6_rmap,
        "Pointer to route-map entries\n")
 {
   int type;
+  safi_t safi;
 
+  safi = bgp_node_safi (vty);
   type = bgp_str2route_type (AFI_IP6, argv[0]);
   if (! type)
     {
@@ -8696,7 +8696,7 @@ DEFUN (no_bgp_redistribute_ipv6_rmap,
       return CMD_WARNING;
     }
 
-  bgp_redistribute_routemap_unset (vty->index, AFI_IP6, type);
+  bgp_redistribute_routemap_unset (vty->index, AFI_IP6, safi, type);
   return CMD_SUCCESS;
 }
 
@@ -8756,7 +8756,7 @@ DEFUN (no_bgp_redistribute_ipv6_rmap_metric,
     }
 
   bgp_redistribute_metric_unset (vty->index, AFI_IP6, type, safi);
-  bgp_redistribute_routemap_unset (vty->index, AFI_IP6, type);
+  bgp_redistribute_routemap_unset (vty->index, AFI_IP6, safi, type);
   return CMD_SUCCESS;
 }
 
@@ -8783,7 +8783,7 @@ bgp_config_write_redistribute (struct vty *vty, struct bgp *bgp, afi_t afi,
   int i;
 
   /* Unicast redistribution only.  */
-  if (safi != SAFI_UNICAST)
+  if ((safi != SAFI_UNICAST) || (safi != SAFI_MULTICAST))
     return 0;
 
   for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
@@ -8800,8 +8800,8 @@ bgp_config_write_redistribute (struct vty *vty, struct bgp *bgp, afi_t afi,
 	  if (bgp->redist_metric_flag[afi][i])
 	    vty_out (vty, " metric %d", bgp->redist_metric[afi][i]);
 
-	  if (bgp->rmap[afi][i].name)
-	    vty_out (vty, " route-map %s", bgp->rmap[afi][i].name);
+	  if (bgp->rmap[afi][safi][i].name)
+	    vty_out (vty, " route-map %s", bgp->rmap[afi][safi][i].name);
 
 	  vty_out (vty, "%s", VTY_NEWLINE);
 	}

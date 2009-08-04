@@ -956,17 +956,17 @@ bgp_redistribute_set (struct bgp *bgp, afi_t afi, int type, safi_t safi)
 
 /* Redistribute with route-map specification.  */
 int
-bgp_redistribute_rmap_set (struct bgp *bgp, afi_t afi, int type, 
+bgp_redistribute_rmap_set (struct bgp *bgp, afi_t afi, safi_t safi, int type, 
                            const char *name)
 {
-  if (bgp->rmap[afi][type].name
-      && (strcmp (bgp->rmap[afi][type].name, name) == 0))
+  if (bgp->rmap[afi][safi][type].name
+      && (strcmp (bgp->rmap[afi][safi][type].name, name) == 0))
     return 0;
 
-  if (bgp->rmap[afi][type].name)
-    free (bgp->rmap[afi][type].name);
-  bgp->rmap[afi][type].name = strdup (name);
-  bgp->rmap[afi][type].map = route_map_lookup_by_name (name);
+  if (bgp->rmap[afi][safi][type].name)
+    free (bgp->rmap[afi][safi][type].name);
+  bgp->rmap[afi][safi][type].name = strdup (name);
+  bgp->rmap[afi][safi][type].map = route_map_lookup_by_name (name);
 
   return 1;
 }
@@ -996,10 +996,10 @@ bgp_redistribute_unset (struct bgp *bgp, afi_t afi, int type, safi_t safi)
   bgp->redist[afi][safi][type] = 0;
 
   /* Unset route-map. */
-  if (bgp->rmap[afi][type].name)
-    free (bgp->rmap[afi][type].name);
-  bgp->rmap[afi][type].name = NULL;
-  bgp->rmap[afi][type].map = NULL;
+  if (bgp->rmap[afi][safi][type].name)
+    free (bgp->rmap[afi][safi][type].name);
+  bgp->rmap[afi][safi][type].name = NULL;
+  bgp->rmap[afi][safi][type].map = NULL;
 
   /* Unset metric. */
   bgp->redist_metric_flag[afi][safi][type] = 0;
@@ -1029,15 +1029,15 @@ bgp_redistribute_unset (struct bgp *bgp, afi_t afi, int type, safi_t safi)
 
 /* Unset redistribution route-map configuration.  */
 int
-bgp_redistribute_routemap_unset (struct bgp *bgp, afi_t afi, int type)
+bgp_redistribute_routemap_unset (struct bgp *bgp, afi_t afi, safi_t safi, int type)
 {
-  if (! bgp->rmap[afi][type].name)
+  if (! bgp->rmap[afi][safi][type].name)
     return 0;
 
   /* Unset route-map. */
-  free (bgp->rmap[afi][type].name);
-  bgp->rmap[afi][type].name = NULL;
-  bgp->rmap[afi][type].map = NULL;
+  free (bgp->rmap[afi][safi][type].name);
+  bgp->rmap[afi][safi][type].name = NULL;
+  bgp->rmap[afi][safi][type].map = NULL;
 
   return 1;
 }

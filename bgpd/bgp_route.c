@@ -5412,14 +5412,14 @@ bgp_redistribute_add (struct prefix *p, struct in_addr *nexthop,
 	    attr_new.med = bgp->redist_metric[afi][safi][type];
 
 	  /* Apply route-map. */
-	  if (bgp->rmap[afi][type].map)
+	  if (bgp->rmap[afi][safi][type].map)
 	    {
 	      info.peer = bgp->peer_self;
 	      info.attr = &attr_new;
 
               SET_FLAG (bgp->peer_self->rmap_type, PEER_RMAP_TYPE_REDISTRIBUTE);
 
-	      ret = route_map_apply (bgp->rmap[afi][type].map, p, RMAP_BGP,
+	      ret = route_map_apply (bgp->rmap[afi][safi][type].map, p, RMAP_BGP,
 				     &info);
 
               bgp->peer_self->rmap_type = 0;
