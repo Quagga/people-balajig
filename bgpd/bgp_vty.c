@@ -8782,14 +8782,14 @@ bgp_config_write_redistribute (struct vty *vty, struct bgp *bgp, afi_t afi,
 {
   int i;
 
-  /* Unicast redistribution only.  */
+  /* Unicast redistribution & Multicast BGP redistribution only.  */
   if ((safi != SAFI_UNICAST) || (safi != SAFI_MULTICAST))
     return 0;
 
   for (i = 0; i < ZEBRA_ROUTE_MAX; i++)
     {
       /* Redistribute BGP does not make sense.  */
-      if (bgp->redist[afi][i] && i != ZEBRA_ROUTE_BGP)
+      if (bgp->redist[afi][safi][i] && i != ZEBRA_ROUTE_BGP)
 	{
 	  /* Display "address-family" when it is not yet diplayed.  */
 	  bgp_config_write_family_header (vty, afi, safi, write);
@@ -8797,8 +8797,8 @@ bgp_config_write_redistribute (struct vty *vty, struct bgp *bgp, afi_t afi,
 	  /* "redistribute" configuration.  */
 	  vty_out (vty, " redistribute %s", zebra_route_string(i));
 
-	  if (bgp->redist_metric_flag[afi][i])
-	    vty_out (vty, " metric %d", bgp->redist_metric[afi][i]);
+	  if (bgp->redist_metric_flag[afi][safi][i])
+	    vty_out (vty, " metric %d", bgp->redist_metric[afi][safi][i]);
 
 	  if (bgp->rmap[afi][safi][i].name)
 	    vty_out (vty, " route-map %s", bgp->rmap[afi][safi][i].name);
