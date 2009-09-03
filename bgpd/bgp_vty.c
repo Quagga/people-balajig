@@ -6948,6 +6948,7 @@ ALIAS (show_bgp_instance_summary,
        "Address family\n"
        "Summary of BGP neighbor status\n")
 
+#if 0 - Deprecated
 /* old command */
 DEFUN (show_ipv6_bgp_summary, 
        show_ipv6_bgp_summary_cmd,
@@ -6971,6 +6972,7 @@ DEFUN (show_ipv6_mbgp_summary,
 {
   return bgp_show_summary_vty (vty, NULL, AFI_IP6, SAFI_MULTICAST);
 }
+#endif
 #endif /* HAVE_IPV6 */
 
 const char *
@@ -9857,11 +9859,13 @@ bgp_vty_init (void)
   install_element (ENABLE_NODE, &show_bgp_instance_neighbors_peer_cmd);
   install_element (ENABLE_NODE, &show_bgp_instance_ipv6_neighbors_peer_cmd);
 
+#if 0 - Deprecated
   /* Old commands.  */
   install_element (VIEW_NODE, &show_ipv6_bgp_summary_cmd);
   install_element (VIEW_NODE, &show_ipv6_mbgp_summary_cmd);
   install_element (ENABLE_NODE, &show_ipv6_bgp_summary_cmd);
   install_element (ENABLE_NODE, &show_ipv6_mbgp_summary_cmd);
+#endif
 #endif /* HAVE_IPV6 */
 
   /* "show ip bgp rsclient" commands. */
