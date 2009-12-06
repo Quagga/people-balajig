@@ -793,7 +793,7 @@ bgp_establish (struct peer *peer)
   /* graceful restart */
   UNSET_FLAG (peer->sflags, PEER_STATUS_NSF_WAIT);
   for (afi = AFI_IP ; afi < AFI_MAX ; afi++)
-    for (safi = SAFI_UNICAST ; safi < SAFI_UNICAST_MULTICAST ; safi++)
+    for (safi = SAFI_UNICAST ; safi < SAFI_MAX ; safi++)
       {
 	if (peer->afc_nego[afi][safi]
 	    && CHECK_FLAG (peer->cap, PEER_CAP_RESTART_ADV)

@@ -2648,6 +2648,8 @@ bgp_clear_route_node (struct work_queue *wq, void *data)
   struct bgp_info *ri;
   afi_t afi = rn->table->afi;
   safi_t safi = rn->table->safi;
+
+  zlog_info("\nEntering bgp_clear_route_node\n");
   
   assert (rn && peer);
   
@@ -2657,11 +2659,21 @@ bgp_clear_route_node (struct work_queue *wq, void *data)
         /* graceful restart STALE flag set. */
         if (CHECK_FLAG (peer->sflags, PEER_STATUS_NSF_WAIT)
             && peer->nsf[afi][safi]
-            && ! CHECK_FLAG (ri->flags, BGP_INFO_STALE)
-            && ! CHECK_FLAG (ri->flags, BGP_INFO_UNUSEABLE))
+            &&  CHECK_FLAG (ri->flags, BGP_INFO_STALE)
+            &&  CHECK_FLAG (ri->flags, BGP_INFO_UNUSEABLE))
+	{
+	  zlog_info("\nEntering IF\n");
           bgp_info_set_flag (rn, ri, BGP_INFO_STALE);
+	}
         else
+	{
+        if (!CHECK_FLAG (ri->flags, BGP_INFO_STALE))
+	{
+	  zlog_info("INFO FLAG NOT SET \n");
+	}
+	  zlog_info("\nEntering ELSE\n");
           bgp_rib_remove (rn, ri, peer, afi, safi);
+	}
         break;
       }
   return WQ_SUCCESS;
